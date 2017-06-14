@@ -1,17 +1,3 @@
-variable "kontena-version" {
-  type = "string"
-  default = "1.3.0"
-}
-variable "kontena-vault_key" {
-  type = "string"
-}
-variable "kontena-vault_iv" {
-  type = "string"
-}
-variable "kontena-initial_admin_code" {
-  type = "string"
-}
-
 module "kontena_master" {
   source = "./kontena-master"
   kontena_version = "${var.kontena-version}"
@@ -34,4 +20,10 @@ resource "digitalocean_droplet" "master" {
   }
 
   user_data = "${module.kontena_master.user_data}"
+}
+
+resource "kontena_grid" "grid" {
+  name = "${var.kontena_grid}"
+  initial_size = "${var.kontena_grid-initial_size}"
+  trusted_subnets = [ ]
 }
