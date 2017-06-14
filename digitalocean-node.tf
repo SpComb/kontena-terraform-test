@@ -21,6 +21,9 @@ module "kontena_node" {
 
 resource "digitalocean_droplet" "node" {
   count = "${var.digitalocean_node_count}"
+  depends_on = [
+    "kontena_grid.grid",
+  ]
 
   image    = "coreos-stable"
   name     = "terraform-test-node${count.index + 1}"
@@ -35,4 +38,21 @@ resource "digitalocean_droplet" "node" {
   }
 
   user_data = "${module.kontena_node.user_data}"
+}
+
+resource "kontena_node" "node" {
+  count = "${var.digitalocean_node_count}"
+  depends_on = [
+    "kontena_grid.grid",
+    "digitalocean_droplet.node",
+  ]
+
+  grid = "${kontena_grid.grid.name}"
+  name = "terraform-test-node${count.index + 1}"
+
+  labels = [
+    "provider=digitalocean",
+    "region=${digitalocean_droplet.node.*.region[count.index]}",
+    "az=${digitalocean_droplet.node.*.region[count.index]}",
+  ]
 }
