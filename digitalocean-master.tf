@@ -1,3 +1,12 @@
+variable "digitalocean_master_region" {
+  type = "string"
+}
+variable "digitalocean_master_size" {
+  type = "string"
+  default = "512mb"
+}
+
+
 module "kontena_master" {
   source = "./kontena-master"
   kontena_version = "${var.kontena-version}"
@@ -9,8 +18,8 @@ module "kontena_master" {
 resource "digitalocean_droplet" "master" {
   image    = "coreos-stable"
   name     = "terraform-test-master"
-  region   = "fra1"
-  size     = "512mb"
+  region   = "${var.digitalocean_master_region}"
+  size     = "${var.digitalocean_master_size}"
   ssh_keys = [ "${var.do_ssh_key_id}" ]
 
   connection {

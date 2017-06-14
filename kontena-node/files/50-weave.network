@@ -1,0 +1,5 @@
+[Match]
+Name=weave datapath
+
+[Link]
+Unmanaged=true
