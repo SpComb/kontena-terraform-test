@@ -6,7 +6,6 @@ variable "digitalocean_master_size" {
   default = "512mb"
 }
 
-
 module "kontena_master" {
   source = "./kontena-master"
   kontena_version = "${var.kontena-version}"
@@ -29,6 +28,19 @@ resource "digitalocean_droplet" "master" {
   }
 
   user_data = "${module.kontena_master.user_data}"
+}
+
+provider "kontena-oauth2" {
+  url = "http://${digitalocean_droplet.master.ipv4_address}:80"
+}
+
+resource "kontena-oauth2_token" "admin" {
+  code = "${var.kontena-initial_admin_code}"
+}
+
+provider "kontena" {
+  url = "http://${digitalocean_droplet.master.ipv4_address}:80"
+  token = "${kontena-oauth2_token.admin.token}"
 }
 
 resource "kontena_grid" "grid" {

@@ -22,8 +22,3 @@ variable "kontena_grid" {
 variable "kontena_grid-initial_size" {
   default = 1
 }
-
-provider "kontena" {
-  url = "http://${digitalocean_droplet.master.ipv4_address}:80"
-  access_token = "${var.kontena-access_token}"
-}
