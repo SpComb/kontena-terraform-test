@@ -1,6 +1,6 @@
 variable "kontena-version" {
   type = "string"
-  default = "1.3.0"
+  default = "1.3.1.rc2"
 }
 variable "kontena-vault_key" {
   type = "string"
