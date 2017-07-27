@@ -1,6 +1,6 @@
 variable "kontena-version" {
   type = "string"
-  default = "1.3.1.rc2"
+  default = "1.3.4"
 }
 variable "kontena-vault_key" {
   type = "string"
@@ -15,10 +15,10 @@ variable "kontena-access_token" {
   type = "string"
 }
 
-variable "kontena_grid" {
+variable "kontena-grid" {
   type = "string"
   default = "test"
 }
-variable "kontena_grid-initial_size" {
+variable "kontena-grid-initial_size" {
   default = 1
 }

@@ -1,15 +1,18 @@
-variable "do_token" {
+variable "digitalocean-token" {
+  type = "string"
+}
+variable "digitalocean-region" {
   type = "string"
 }
 
-variable "do_ssh_key_path" {
+variable "digitalocean-ssh_key_path" {
   type = "string"
   default = "~/.ssh/id_rsa"
 }
-variable "do_ssh_key_id" {
+variable "digitalocean-ssh_key_id" {
   type = "string"
 }
 
 provider "digitalocean" {
-  token = "${var.do_token}"
+  token = "${var.digitalocean-token}"
 }

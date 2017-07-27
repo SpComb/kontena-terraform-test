@@ -1,58 +1,18 @@
-variable "digitalocean_node_count" {
-  type = "string"
-  default = 1
-}
-variable "digitalocean_node_region" {
-  type = "string"
-}
-variable "digitalocean_node_size" {
+variable "digitalocean-node-size" {
   type = "string"
   default = "1gb"
 }
 
+module "digitalocean-node" {
+  source = "./digitalocean-node"
 
-module "kontena_node" {
-  source = "./kontena-node"
-  kontena_version = "${var.kontena-version}"
-  master_uri = "ws://${digitalocean_droplet.master.ipv4_address}:80"
-  grid_token = "${kontena_grid.grid.token}"
-  peer_interface = "eth1"
-}
+  digitalocean-region = "${var.digitalocean-region}"
+  digitalocean-size = "${var.digitalocean-node-size}"
+  digitalocean-ssh_key_id = "${var.digitalocean-ssh_key_id}"
+  digitalocean-ssh_key_path = "${var.digitalocean-ssh_key_path}"
 
-resource "digitalocean_droplet" "node" {
-  count = "${var.digitalocean_node_count}"
-  depends_on = [
-    "kontena_grid.grid",
-  ]
-
-  image    = "coreos-stable"
-  name     = "terraform-test-node${count.index + 1}"
-  region   = "${var.digitalocean_node_region}"
-  size     = "${var.digitalocean_node_size}"
-  ssh_keys = [ "${var.do_ssh_key_id}" ]
-
-  connection {
-    type = "ssh"
-    user = "core"
-    private_key = "${file(var.do_ssh_key_path)}"
-  }
-
-  user_data = "${module.kontena_node.user_data}"
-}
-
-resource "kontena_node" "node" {
-  count = "${var.digitalocean_node_count}"
-  depends_on = [
-    "kontena_grid.grid",
-    "digitalocean_droplet.node",
-  ]
-
-  grid = "${kontena_grid.grid.name}"
-  name = "terraform-test-node${count.index + 1}"
-
-  labels = [
-    "provider=digitalocean",
-    "region=${digitalocean_droplet.node.*.region[count.index]}",
-    "az=${digitalocean_droplet.node.*.region[count.index]}",
-  ]
+  kontena-version = "${var.kontena-version}"
+  kontena-uri = "ws://${module.digitalocean_master.ipv4_address}"
+  kontena-grid = "${kontena_grid.grid.name}"
+  kontena-grid-token = "${kontena_grid.grid.token}"
 }

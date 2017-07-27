@@ -1,37 +1,24 @@
-variable "digitalocean_master_region" {
-  type = "string"
-}
-variable "digitalocean_master_size" {
+variable "digitalocean-master-size" {
   type = "string"
   default = "512mb"
 }
 
-module "kontena_master" {
-  source = "./kontena-master"
-  kontena_version = "${var.kontena-version}"
-  vault_key = "${var.kontena-vault_key}"
-  vault_iv = "${var.kontena-vault_iv}"
-  initial_admin_code = "${var.kontena-initial_admin_code}"
-}
+module "digitalocean_master" {
+  source = "./digitalocean-master"
 
-resource "digitalocean_droplet" "master" {
-  image    = "coreos-stable"
-  name     = "terraform-test-master"
-  region   = "${var.digitalocean_master_region}"
-  size     = "${var.digitalocean_master_size}"
-  ssh_keys = [ "${var.do_ssh_key_id}" ]
+  digitalocean-region = "${var.digitalocean-region}"
+  digitalocean-size = "${var.digitalocean-master-size}"
+  digitalocean-ssh_key_id = "${var.digitalocean-ssh_key_id}"
+  digitalocean-ssh_key_path = "${var.digitalocean-ssh_key_path}"
 
-  connection {
-    type = "ssh"
-    user = "core"
-    private_key = "${file(var.do_ssh_key_path)}"
-  }
-
-  user_data = "${module.kontena_master.user_data}"
+  kontena-version = "${var.kontena-version}"
+  kontena-vault_key = "${var.kontena-vault_key}"
+  kontena-vault_iv = "${var.kontena-vault_iv}"
+  kontena-initial_admin_code = "${var.kontena-initial_admin_code}"
 }
 
 provider "kontena-oauth2" {
-  url = "http://${digitalocean_droplet.master.ipv4_address}:80"
+  url = "http://${module.digitalocean_master.ipv4_address}"
 }
 
 resource "kontena-oauth2_token" "admin" {
@@ -39,12 +26,6 @@ resource "kontena-oauth2_token" "admin" {
 }
 
 provider "kontena" {
-  url = "http://${digitalocean_droplet.master.ipv4_address}:80"
+  url = "http://${module.digitalocean_master.ipv4_address}"
   token = "${kontena-oauth2_token.admin.token}"
-}
-
-resource "kontena_grid" "grid" {
-  name = "${var.kontena_grid}"
-  initial_size = "${var.kontena_grid-initial_size}"
-  trusted_subnets = [ ]
 }
