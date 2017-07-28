@@ -3,8 +3,13 @@ variable "digitalocean-node-size" {
   default = "1gb"
 }
 
+variable "digitalocean-node-count" {
+}
+
 module "digitalocean-node" {
   source = "./digitalocean-node"
+
+  count = "${var.digitalocean-node-count}"
 
   digitalocean-region = "${var.digitalocean-region}"
   digitalocean-size = "${var.digitalocean-node-size}"
