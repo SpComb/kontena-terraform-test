@@ -3,6 +3,12 @@ variable "digitalocean-node-size" {
   default = "1gb"
 }
 
+resource "kontena_grid" "grid" {
+  name = "${var.kontena-grid}"
+  initial_size = "${var.kontena-grid-initial_size}"
+  trusted_subnets = [ ]
+}
+
 module "digitalocean-node1" {
   source = "./digitalocean-node"
 
@@ -14,7 +20,7 @@ module "digitalocean-node1" {
   digitalocean-ssh_key_path = "${var.digitalocean-ssh_key_path}"
 
   kontena-version = "${var.kontena-version}"
-  kontena-uri = "ws://${module.digitalocean_master.ipv4_address}"
+  kontena-uri = "${module.digitalocean_master.websocket_url}"
   kontena-grid = "${kontena_grid.grid.name}"
 }
 
@@ -29,6 +35,6 @@ module "digitalocean-node2" {
   digitalocean-ssh_key_path = "${var.digitalocean-ssh_key_path}"
 
   kontena-version = "${var.kontena-version}"
-  kontena-uri = "ws://${module.digitalocean_master.ipv4_address}"
+  kontena-uri = "${module.digitalocean_master.websocket_url}"
   kontena-grid = "${kontena_grid.grid.name}"
 }

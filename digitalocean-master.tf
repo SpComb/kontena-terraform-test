@@ -17,15 +17,27 @@ module "digitalocean_master" {
   kontena-initial_admin_code = "${var.kontena-initial_admin_code}"
 }
 
-provider "kontena-oauth2" {
-  url = "http://${module.digitalocean_master.ipv4_address}"
+provider "kontena" {
+  alias = "master-bootstrap"
+  url = "${module.digitalocean_master.http_url}"
+  // TODO: retry client until master is up? Unless we can use a terraform provisioner to wait for the master to start
 }
 
-resource "kontena-oauth2_token" "admin" {
+resource "kontena_token" "admin" {
+  provider = "kontena.master-bootstrap"
+
   code = "${var.kontena-initial_admin_code}"
 }
 
 provider "kontena" {
-  url = "http://${module.digitalocean_master.ipv4_address}"
-  token = "${kontena-oauth2_token.admin.token}"
+  url = "${module.digitalocean_master.http_url}"
+  token = "${kontena_token.admin.token}"
+}
+
+output "KONTENA_URI" {
+  value = "${module.digitalocean_master.http_url}"
+}
+
+output "KONTENA_TOKEN" {
+  value = "${kontena_token.admin.token}"
 }
