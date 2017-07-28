@@ -1,23 +1,20 @@
 data "template_file" "kontena-agent_env" {
-  count = "${var.count}"
   template = "${file("${path.module}/templates/kontena-agent.env")}"
 
   vars {
     kontena_version = "${var.kontena_version}"
     kontena_uri = "${var.master_uri}"
-    kontena_token = "${element(var.node_tokens, count.index) == "" ? var.grid_token : ""}" // XXX: empty token needs to omitted from template
-    kontena_node_token = "${var.node_tokens[count.index]}"
+    kontena_token = "${var.node_token == "" ? var.grid_token : ""}" // XXX: empty token needs to omitted from template
+    kontena_node_token = "${var.node_token}"
     kontena_peer_interface = "${var.peer_interface}"
   }
 }
 
 data "ignition_file" "kontena-agent_env" {
-  count = "${var.count}"
-
   filesystem = "root"
   path = "/etc/kontena-agent.env"
   content {
-    content = "${data.template_file.kontena-agent_env.*.rendered[count.index]}"
+    content = "${data.template_file.kontena-agent_env.rendered}"
   }
 }
 
@@ -32,10 +29,8 @@ data "ignition_networkd_unit" "weave" {
 }
 
 data "ignition_config" "kontena-node" {
-  count = "${var.count}"
-
   files = [
-    "${data.ignition_file.kontena-agent_env.*.id[count.index]}",
+    "${data.ignition_file.kontena-agent_env.id}",
   ]
   networkd = [
     "${data.ignition_networkd_unit.weave.id}",
