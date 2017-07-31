@@ -17,6 +17,9 @@ module "coreos_node_ignition" {
   grid_token = "${var.kontena-grid-token}"
   node_token = "${kontena_node.node.token}"
   peer_interface = "eth1"
+
+  ssl_cert_pem = "${var.ssl_cert_pem}"
+  ssl_cert_cn = "${var.ssl_cert_cn}"
 }
 
 resource "digitalocean_droplet" "node" {

@@ -22,6 +22,8 @@ module "digitalocean-node1" {
   kontena-version = "${var.kontena-version}"
   kontena-uri = "${module.digitalocean_master.websocket_url}"
   kontena-grid = "${kontena_grid.grid.name}"
+
+  # without SSL verify
 }
 
 module "digitalocean-node2" {
@@ -37,4 +39,7 @@ module "digitalocean-node2" {
   kontena-version = "${var.kontena-version}"
   kontena-uri = "${module.digitalocean_master.websocket_url}"
   kontena-grid = "${kontena_grid.grid.name}"
+
+  ssl_cert_pem = "${module.digitalocean_master.ssl_cert_pem}"
+  ssl_cert_cn = "${module.digitalocean_master.ssl_cert_cn}"
 }

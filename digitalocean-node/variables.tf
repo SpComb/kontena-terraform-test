@@ -11,3 +11,6 @@ variable "kontena-grid" {}
 variable "kontena-grid-token" {
   default = ""
 }
+
+variable "ssl_cert_pem" { default = "" }
+variable "ssl_cert_cn" { default = "" }
