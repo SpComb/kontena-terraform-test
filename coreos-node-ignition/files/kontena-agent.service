@@ -16,6 +16,7 @@ ExecStartPre=-/usr/bin/docker rm kontena-agent
 ExecStartPre=/usr/bin/docker pull kontena/agent:${KONTENA_VERSION}
 ExecStart=/usr/bin/docker run --name kontena-agent \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /etc/kontena-agent:/etc/kontena-agent:ro \
     -v /etc/kontena-agent.env:/etc/kontena.env \
     --env-file /etc/kontena-agent.env \
     --net=host \

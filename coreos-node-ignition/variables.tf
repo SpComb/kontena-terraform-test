@@ -7,3 +7,6 @@ variable "node_token" {
   default = ""
 }
 variable "peer_interface" {}
+
+variable "ssl_cert_pem" { default = "" }
+variable "ssl_cert_cn" { default = "" }

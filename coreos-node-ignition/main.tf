@@ -7,9 +7,27 @@ data "template_file" "kontena-agent_env" {
     kontena_token = "${var.node_token == "" ? var.grid_token : ""}" // XXX: empty token needs to omitted from template
     kontena_node_token = "${var.node_token}"
     kontena_peer_interface = "${var.peer_interface}"
+    ssl_cert_file = "${var.ssl_cert_pem == "" ? "" : "/etc/kontena-agent/ca.pem"}"
+    kontena_ssl_verify = "${var.ssl_cert_pem != ""}"
+    kontena_ssl_hostname = "${var.ssl_cert_cn}"
+  }
+}
+data "template_file" "kontena-cert_pem" {
+  template = "${file("${path.module}/templates/kontena-cert.pem")}"
+
+  vars {
+    ssl_cert = "${var.ssl_cert_pem}"
   }
 }
 
+data "ignition_file" "kontena-agent-ca_pem" {
+  filesystem = "root"
+  path = "/etc/kontena-agent/ca.pem"
+  mode = "0644"
+  content {
+    content = "${data.template_file.kontena-cert_pem.rendered}"
+  }
+}
 data "ignition_file" "kontena-agent_env" {
   filesystem = "root"
   path = "/etc/kontena-agent.env"
@@ -30,6 +48,7 @@ data "ignition_networkd_unit" "weave" {
 
 data "ignition_config" "kontena-node" {
   files = [
+    "${data.ignition_file.kontena-agent-ca_pem.id}",
     "${data.ignition_file.kontena-agent_env.id}",
   ]
   networkd = [
