@@ -16,10 +16,8 @@ EnvironmentFile=-/etc/kontena-server.custom.env
 ExecStartPre=-/usr/bin/docker stop kontena-server-haproxy
 ExecStartPre=-/usr/bin/docker rm kontena-server-haproxy
 ExecStartPre=-/usr/bin/docker pull kontena/haproxy:latest
-ExecStart=/usr/bin/docker run --name=kontena-server-haproxy \
-  --link kontena-server-api:kontena-server-api \
-  -p 80:80 -p 443:443 \
-  kontena/haproxy:latest
+ExecStart=/opt/bin/kontena-server-haproxy.sh \
+  -p 80:80 -p 443:443 kontena/haproxy:latest
 ExecStop=/usr/bin/docker stop kontena-server-haproxy
 TimeoutStartSec=15min
 
