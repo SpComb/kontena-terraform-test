@@ -1,6 +1,6 @@
 variable "kontena-version" {
   type = "string"
-  default = "1.4.0.pre5"
+  default = "1.4.0.pre6"
 }
 variable "kontena-vault_key" {
   type = "string"

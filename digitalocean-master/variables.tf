@@ -7,3 +7,7 @@ variable "kontena-version" {}
 variable "kontena-vault_key" {}
 variable "kontena-vault_iv" {}
 variable "kontena-initial_admin_code" {}
+
+variable "ssl_cert_cn" {
+  default = "Test"
+}

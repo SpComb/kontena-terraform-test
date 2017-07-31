@@ -20,6 +20,9 @@ module "digitalocean_master" {
 provider "kontena" {
   alias = "master-bootstrap"
   url = "${module.digitalocean_master.http_url}"
+  ssl_cert_pem = "${module.digitalocean_master.ssl_cert_pem}"
+  ssl_cert_cn = "${module.digitalocean_master.ssl_cert_cn}"
+
   // TODO: retry client until master is up? Unless we can use a terraform provisioner to wait for the master to start
 }
 
@@ -31,6 +34,8 @@ resource "kontena_token" "admin" {
 
 provider "kontena" {
   url = "${module.digitalocean_master.http_url}"
+  ssl_cert_pem = "${module.digitalocean_master.ssl_cert_pem}"
+  ssl_cert_cn = "${module.digitalocean_master.ssl_cert_cn}"
   token = "${kontena_token.admin.token}"
 }
 
